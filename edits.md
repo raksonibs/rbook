@@ -1,0 +1,4 @@
+- First round of edits:
+  - Focused on general grammar and content changes, as some information is too inadequate to get a good picture of react (ie: the pros vs cons doesn't amplify the paper)
+- Second
+  - did a general formatting edit to properly include sources, and make it appear more bookish

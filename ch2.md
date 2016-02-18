@@ -16,8 +16,228 @@ As such, the engineers sought to build their own framework, and React was ultima
 
 A Comparison
 
-Before we actually go into the why of React, I think it is best to go into the why not others when compared to React. In order to prove the efficiency of React, let’s use some sample React, Angular, and Ember code to compare these frameworks. 
-The test itself will be a matter of implementing many UI elements into one page. Afterwards, we will do a comparison by live loading certain parts of a page via an application. 
+Before we actually go into the why of React, I think it is best to go into the why not others when compared to React. In order to prove the efficiency of React, let’s use some sample React and Angular code to compare these frameworks. (Inspired by https://www.codementor.io/reactjs/tutorial/reactjs-vs-angular-js-performance-comparison-knockout)
+The test itself will be a matter of implementing many UI elements into one page via a TODO app. The code for each todo app will be seen below.
+
+React Code:
+var Class = React.createClass({
+    select: function(data) {
+        this.props.selected = data.id;
+        this.forceUpdate();
+    },
+
+    render: function() {
+        var items = [];
+        for (var i = 0; i < this.props.data.length; i++) {
+            items.push(
+                React.createElement("div", { className: "row" },
+                    React.createElement("div", { className: "col-md-12 test-data" },
+                        React.createElement("span", { className: this.props.selected === this.props.data[i].id ? "selected" : "", onClick: this.select.bind(null, this.props.data[i]) }, this.props.data[i].label)
+                    )
+                )
+            );
+        }
+
+        return React.createElement("div", null, items);
+    }
+});
+
+$("#run-react").on("click", function() {
+    var built = new Class({ data: data, selected: null });
+
+    var data = _buildData(),
+    date = new Date();
+
+    React.render(built, $("#react")[0]);
+    $("#run-react").text((new Date() - date) + " ms");
+});
+
+Angular
+<div>
+    <div class="row" ng-repeat="item in data">
+        <div class="col-md-12 test-data">
+            <span ng-class="{ selected: item.id === $parent.selected }" ng-click="select(item)">{{item.label}}</span>
+        </div>
+    </div>
+</div>
+
+angular.module("test", []).controller("controller", function($scope) {
+    $scope.run = function() {
+        var data = _buildData(),
+        date = new Date();
+
+        $scope.selected = null;
+        $scope.$$postDigest(function() {
+            $("#run-angular").text((new Date() - date) + " ms");
+        });
+
+        $scope.data = data;
+    };
+
+    $scope.select = function(item) {
+        $scope.selected = item.id;
+    };
+});
+
+Raw Dom
+<script type="text/html" id="raw-template">
+    <div class="row">
+        <div class="col-md-12 test-data">
+            <span class="{{className}}">{{label}}</span>
+        </div>
+    </div>
+</script>
+
+$("#run-raw").on("click", function() {
+    document.getElementById("raw").innerHTML = "";
+    var data = _buildData(),
+        date = new Date(),
+        template = $("#raw-template").html(),
+        html = "";
+
+    for (var i = 0; i < data.length; i++) {
+        var render = template;
+        render = render.replace("{{className}}", "");
+        render = render.replace("{{label}}", data[i].label);
+        html += render;
+    }
+
+    document.getElementById("raw").innerHTML = html;
+
+    $("#raw").on("click", ".test-data span", function() {
+        $("#raw .selected").removeClass("selected");
+        $(this).addClass("selected");
+    });
+
+    $("#run-raw").text((new Date() - date) + " ms");
+});
+
+To get a comparison of the results, I created a standard page that runs each of the following pieces of code: 
+
+Standard Html Page Code
+<html ng-app="test" class="ng-scope" hola_ext_inject="disabled"><head><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+        <title>Performance Comparison for Angular and React</title>
+        <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.css" rel="stylesheet">        
+
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.3/angular.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/react/0.12.1/react.js"></script>
+        <script type="text/javascript">
+            console.timeEnd("build");
+
+            document.addEventListener("DOMContentLoaded", function() { 
+                _react();
+                _raw();
+            });
+
+            _angular();
+
+            function _buildData(count) {
+                count = count || 1000;
+
+                var adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
+                var colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
+                var nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
+                var data = [];
+                for (var i = 0; i < count; i++)
+                    data.push({id: i+1, label: adjectives[_random(adjectives.length)] + " " + colours[_random(colours.length)] + " " + nouns[_random(nouns.length)] });
+                return data;
+            }
+
+            function _random(max) {
+                return Math.round(Math.random()*1000)%max;
+            }            
+
+            function _angular(data) {
+                
+            }
+
+            function _react() {
+                
+            }
+
+            function _raw() {
+                
+            }
+
+            ko.observableArray.fn.reset = function(values) {
+                var array = this();
+                this.valueWillMutate();
+                ko.utils.arrayPushAll(array, values);
+                this.valueHasMutated();
+            };
+        </script>
+    </head>
+    <body ng-controller="controller" class="ng-scope">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Performance Comparison for React, Angular</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h3>React</h3>
+                    </div>
+                    <div class="col-md-5 text-right time" id="run-react">Run</div>
+                </div>
+                <div id="react"></div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h3>Angular</h3>
+                    </div>
+                    <div class="col-md-5 text-right time" id="run-angular" ng-click="run()">Run</div>
+                </div>
+                <div>
+                    <!-- ngRepeat: item in data -->
+                </div>
+            </div>            
+
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-md-7">
+                        <h3>Raw</h3>
+                    </div>
+                    <div class="col-md-5 text-right time" id="run-raw">Run</div>
+                </div>
+                <div id="raw"></div>
+            </div>
+        </div>
+
+        <script type="text/html" id="raw-template">
+            <div class="row">
+                <div class="col-md-12 test-data">
+                    <span class="{{className}}">{{label}}</span>
+                </div>
+            </div>
+        </script>
+    
+
+</body></html>
+
+This gives us, after running the code something like this:
+
+
+But is just after one time. What if we ran this over many times, over many browsers. What would we get? The answer, like hopefully many things, is below in the ebook.
+
+Figures
+Using our test code, we saw an initial bump favoring React, but would this stand true given multiple tests. Looking at the graph for google chrome gives us a telling image:
+
+
+It is clear that React is a head and shoulders above the others in terms of benchmarking, and although usually is only a few ms off the raw implementation, it sometimes beats it.
+
+What about real time rendering of UI elements, is React faster there? Well, using our examples we can see how React performs. Adding a preformatted tag into the code for each run example, ie: `<pre> test </pre>`, you will see the Angular code flutter this pre tag on each implementation. The React code however seems aware almost of this formatted tag, and instead works around it. It updates everything else except that tag!
+
+So the question then is why and how?
+
+What’s so good about React:
+For in that sleep of death may dreams come, when we have shuffled off this mortal coil must give us pause was uttered by Hamlet, and I think the React engineers took that to heart when building the framwork.
+
+React has shuffled off from Javascript fatigue. It has made palsied developers into frenzied advocates. And the reason was seen above, it is fast and effiecien.
 
 Why is React so great? The answer is fairly easy, but here is a breakdown of a few of its talking points:
 - it has a great track record: Facebook, one of the largest sites, uses it
@@ -37,148 +257,4 @@ Ultimately, React is a choice like any JS framework. Although I think it has a l
 
 With a little bit of React's watercooler moments under our belt, let's go to setting it up. The next two posts will be about setting up a simple backend for React as well as using Gulp or Webpack to get things rolling.
 
-ch 3
-
-So with the features of React in the back of our mind, let's make a backend suitable of working with React. The plan is to make a backend via express that has mongo as it's db and express as it's layout manager. Basically, lets make a MERN App:D
-
-So start by running `express --ejs` in a directory you wish to create the project.
-
-Once your directory structure is made (sorry if I am skipping the basics, I am assuming some understanding of MVC/MVVM and JS), let's run a bunch of node commands to set everything up.
-
-Run: `sudo npm install --save gulp gulp-live-server jquery react reactify vinyl-source-stream guid connect-mongo browserify browser-sync babel`
-
-These are a lot of packages, but I am going to likely show a few ways of setting up config with React, so bare with me.
-
-After this, let's set up our express app server to take in a few routes for json. Here is what it look:
-{% highlight javascript %}
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
-
-
-var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routes);
-app.use('/users', users);
-
-require('./routes/things.js')(app);
-
-
-if (app.get('env') === 'development') {
-    console.log("connecting to local db");
-    var db = "mongodb://localhost/myapp";
-    mongoose.connect(db, function() {
-        // console.log("dropping local db to renew");
-        // mongoose.connection.db.dropDatabase();
-    })   
-} else {
-    console.log("connecting to prod db");
-    mongoose.connect(secrets.db);
-}
-
-mongoose.connection.on('error', function() {
-  console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
-});
-
-
-module.exports = app;
-
-{% endhighlight %}
-
-Here is the routes for the things.js:
-{% highlight javascript %}
-var express = require('express');
-var router = express.Router();
-var Thing = require('../models/Thing');
-
-module.exports = function(app) {
-
-app.route('/api/things')
-.get(function(req,res) {
-    console.log('using this route')
-    Thing.find({}, function(err, things) {
-    if (err) return next(err)
-    
-    res.send(things);  
-  });
-  })
-.post(function(req, res) {
-  var thing = new Thing({
-    name: req.body.name,
-    loved: false
-  })
-
-  thing.save(function(err) {
-    if (err) return next(err)
-
-    res.status(300).send()
-  })
-})
-
-app.route('/api/things/:id')
-  .delete(function(req, res) {
-    Thing.findOne({
-      _id: req.params.id
-    }).remove(function(x) {
-      
-    });
-  })
-  .patch(function(req, res) {
-    Thing.findOne({
-      _id: req.body._id
-    }, function(error, thing) {
-      for (var key in req.body) {
-        thing[key] = req.body[key]
-      }
-
-      thing.save()
-      res.status(200).send()
-    })
-  })
-
-}
-{% endhighlight %}
-
-Here is the basic structure for our only model for now:
-{% highlight javascript %}
-var mongoose = require('mongoose');
-
-var thingSchema = new mongoose.Schema({
-  name: String,
-  loved: String,
-  id: String
-});
-
-module.exports = mongoose.model('Thing', thingSchema, "Things");
-
-{% endhighlight %}
-
-To make sure everything is okay, run a few curl requests with mongo running:
-
-`curl localhost:3000/api/things
-curl -d "name=silly" localhost:3000/api/things
-curl localhost:3000/api/things`
-
-After seeing what returns, make sure the server starts with a `node ./bin/www` or setup your own ports and start process (this will change shortly mind you once gulp comes in)!
-
-Alright great, we have a JSON CRUD app suitable to build React upon. First though, let's get a packaged solution manager like gulp to help us out here!
 

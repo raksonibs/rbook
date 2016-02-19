@@ -5,3 +5,5 @@
   - updated the graphs and format (footnotes, justified margins)
   - smaller grammar edits and some content changes to ending and beginning
 - Third
+  - formatting to follow structure of a technical report more closely via headers
+  - added appendcies, references, and sections according to technical report

@@ -1,4 +1,104 @@
-*Note: This is an excerpt from an upcoming ebook, TLDR: React, by Oskar Niburski.
+
+
+
+
+TLDR => () { React };
+Chapter 2 
+
+
+
+
+
+Oskar Niburski
+Software Engineer 
+Hockeystick.co
+
+
+
+York University
+212644944
+
+
+Table of Contents
+
+Abstract ……………..……………..……………..……………..…………….……………..………….2
+List of Figures ……..……………..……………..……………..……………..……………..………….3
+List of Tables .……………..……………..………………..……………..……………....………….....3
+List of Acronyms Used..……………..……………..……………..……………..……………..……..4
+Introduction.……………..……………..……………..……………..……………..……………..…….5
+Background……………..……………..……………..……………..……………..………………...….6
+    A Not so Long History…..……………..………………..……………..………………..…....1
+    The Comparison…..……………..………………..……………..………………..……………8
+        React Code…..……………..………………..……………..………………..…………9
+        Angular Code…..……………..………………..……………..………………..………9
+        Raw Code…..……………..………………..……………..………………..…………..9
+    Figure This…..……………..………………..……………..………………..……………..…...9
+Discussion…..……………..………………..……………..………………..……………..……………9
+    What Makes React Work?…..……………..………………..……………..………………...9
+    Virtual DOM…..……………..………………..……………..………………..………………..9
+    React Negatives…..……………..………………..……………..………………..……………9
+Conclusion…..……………..………………..……………..………………..……………..………..10
+References…..……………..………………..……………..………………..……………..………10
+Appendix…..……………..………………..……………..………………..……………..………11
+    
+
+
+
+
+
+Abstract 
+
+This is an excerpt from a larger book concerning the React framework, by Oskar Niburski. The aim of chapter two is to understand React’s history, how it compares to other frameworks, and some of its benefits as well as concerns and problems the framework has. Ultimately it hopes to give the developer a firm understanding of React to start developing with the framework. It does so by exploring the Virtual DOM, the tree like component interrelations, as well as a component’s lifecycle. It also does comparisons to show React’s speed and efficiency. It is important to note that because this excerpt comes from a larger book, it represents a small microcosm to the larger work. For the entire book, please contact Oskar Niburski at oskarniburski@gmail.com.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+List of Figures
+
+2.1 Performance Comparison for React and Angular - page
+2.2 React vs Angular and Raw - Chrome
+2.3 React vs Angular and Raw - Safari
+2.4 React vs Angular and Raw - Firefox
+2.5 Component Lifecycle 
+2.6 Virtual DOM
+2.7 React Interplay
+
+List of Tables
+
+Appendix A.1 - Response Times for Chrome
+Appendix A.2 - Response Times for Safari
+Appendix A.3 - Response Times for Firefox
+
+Acronyms Used
+
+DOM - Document Object Model
+HTML - Hyper Text Markup Language
+JSX - JavaScript XML
+UI - User Interface
+
+
+
+
 
 CHAPTER 2
 An Introduction
@@ -20,8 +120,7 @@ I don’t mean that React itself has changed immensely over time, but rather, it
 You can built mobile native applications with in, either in React Native or ReApp, you can implement functional like frameworks like Redux, and you can build a responsive web application in a few hours. It is this versatility, with similar core concepts running through all of them, that makes React fairly easy to be understood.React was engineered to be easily understood by even the most beginning developer. And that especially means you.
 
 This ease of development is why likely React is so popular. Despite some new ideas and terms that that haven’t been popular in the Javascript community, React opens up a new way to develop. These words and concepts are for example isomorphism, flux, redux, and jsx. But before we explain these terms, let’s look at the history of React a little bit more.
-
-A Not So Long History
+Background  - A Not So Long History
 
 Javascript itself has gone through immense changes. From the ES7 protocols to being coded by Brendan Eich’s in ten days, it now powers the web.
 
@@ -140,52 +239,54 @@ This will act as a baseline to compare the rendering of the components. Unfortun
 
 The comparison is rendered via a webpage, seen in Figure 2.1 below. If we were to run each one of these buttons once, we would see something like this:
 
-Figure 2.1
+Figure 2.1 Source: Oskar Niburski
 
-But of course, one time running isn’t indicative of anything. And what’s more, we have to test on many browsers!So what if we ran this over many times, over many browsers? What would we get? The answer, like hopefully many things, is below in the ebook.
+But of course, one time running isn’t indicative of anything. And what’s more, we have to test on many browsers! So what if we ran this over many times, over many browsers? What would we get? The answer, like hopefully many things, is below in the ebook.
 
 Figure This
+
 Using our test code, we saw after one time, the speed favored React, but would this stand true given multiple tests. Looking at the graph for chrome gives us a telling image:
 
-Figure 2.2
+Figure 2.2 Source: Oskar Niburski
+
 Looking at the comparison for other browsers you see a similar trend:
 
-Figure 2.3                          Figure 2.4
+Figure 2.3 Source: Oskar Niburski               Figure 2.4 Source: Oskar Niburski
 
 It is clear that React is a head and shoulders above the others in terms of benchmarking, and although usually is only a few ms off the raw implementation, it sometimes beats it.
 
-Comparing the two in terms of download size, despite React’s speed, it is a much larger file size as a whole (~1.8MB). Angular is only 50KB. However, if we only use the View layer in React, and not the entire application, it’s size is much more reasonable at 26KB.
+Comparing the two in terms of download size, despite React’s speed, it is a much larger file size as a whole (~1.8MB). Angular is only 50KB. Yet if we only use the View layer in React, and not the entire application, it’s size is much more reasonable at 26KB.
 
-What about real time rendering of UI elements, is React faster there? Well, using our examples we can see how React performs. Adding a preformatted tag into the code, at the very top of the html elements, allows us to test each run’s example of how they actually load the individual and changing components. With Angular you will see flutter this pre tag on each implementation. The React code however seems aware almost of this formatted tag, and instead works around it. It updates everything else except that tag!
+What about real time rendering of UI elements, is React faster? Using our examples we can see how React performs. Adding a preformatted tag into the code, at the very top of the html elements, allows us to test each run’s example of how they actually load the individual and changing components. With Angular you will see flutter this pre tag on each implementation. The React code however seems aware almost of this formatted tag, and instead works around it. It updates everything else except that tag!
 
 This can be explained perhaps in a diagram outlining the lifecycle of a React component.
-Figure 2.5
+Figure 2.5 Source: Oskar Niburski
 
 In this diagram, you see that once a component is rendered, it is mounted to the DOM. This basically means it is placed in the DOM, with the Virtual DOM tracking the said mounted component. The render stage gives back HTML markup, and the cycle continues as the elements on the page changes. In Angular, there is no difference tracking explicitly, therefore, it must run the rerender for all components.
 
 So the question then becomes how is React doing what it is doing?
 
-What Makes React Work?
+Discussion - What Makes React Work?
 
 React has created and simultaneously ended Javascript fatigue. It has made palsied developers into frenzied advocates. And the reason was seen above, it is fast and efficient.
 
 But why is it so fast. Let’s go into some of its features then.
 
 React has great production experience: Unlike other frameworks like Elm, Meteor, or Ember, React is used by billions of people every year by Facebook. It is tested and has a huge community behind it, constantly optimizing code. Like Postgresql did to mysql, I imagine React will do to other frameworks because of its sheer use by other developers.
+
 React is Pluggable: Basically React can be an MVC or MVVM framework, but it often times is only a view layer. Therefore it can be integrated into any app by just targeting this View layer for React. Such a feature is advantageous, that because React is developer agnostic, it is able to be used in any part of an application!
+
 Composable: React uses a tree like structure (refer to the figure below) to refer to its individual components. Each component has a reference to another component, and thus creates a hierarchical structure with many leafs and branches. This interlocking of components allows React to reuse its own components, and thus makes for a modular and dynamic developer environment. Furthermore, this structure allows it to build out a virtual DOM that represents each of these components
+
 Non Trashing UIs: React builds out the virtual DOM in such a way it knows exactly what to build and where. This allows for smooth UI change, without any odd bubble effects or unforeseen consequences like those seen in Angular or Ember.
 
 JSX: Angular and Ember load their JavaScript into the DOM itself. This can be seen in my example code for testing the speed of the framework. This works great perhaps for small apps, but leads to many errors. Because HTML is not a compiled language, and itself is just markdown, it becomes difficult to track errors. There is no compile process to see if your Angular code is itself accurate, and if there are bugs in it. JSX was introduced by the engineering team to compile JavaScript into HTML elements, and thus track errors in your code (for example, orphaned HTML tags, in correct returns, improper property types for elements). This is a great advantage for React, as it allows for a more controlled developer environment and allows JavaScript to do what it does best, which is dynamic control, and the HTML serve only as document structure afterwards.
 
-
-
-
-
+Overall, React has many positives that many frameworks do not have. Let’s look with more detail how it implements these features.
 Virtual DOM
 
 
-Figure 2.6
+Figure 2.6 Source:  http://techblog.constantcontact.com/software-development/reactive-component-based-uis/
 
 Looking at the above image is telling. React’s virtual DOM updating looks very similar to how Git determines differences in code. Some have made the comparison of React’s virtual DOM to the legendary SVN. Nevertheless, an explanation is necessary. 
 
@@ -204,9 +305,12 @@ Too much boilerplate: Looking at the Angular code and the pure React code, you s
 No explicit two way binding: React is unidirectional, and only allows for one way to update the DOM. Referring to the image below, you see that the application notifies in one way, and the virtual DOM, as well as the DOM also updates in one way. In Angular, there is two way binding, that a change in the App immediately changes the DOM. However React is opinionated that unidirectional binding allows for more control of your application, and removes unintended consequences and cascades from your application’s UI.Figure 2.7
 
 JSX: Now I argued above of JSX’s strengths, but it does come with many weaknesses. JSX cares more about the separation of concerns rather than the separation of technologies. All your styles, markup, and dynamic code fit into one file and is served into a structure. This was surprising and rejected by many developers at first. It becomes a battle of JS in HTML vs HTML in JS. However I submit that when using JSX, debugging becomes a breeze because you know where the error occurs. With JS in HTML, because there is no explicit interface and HTML is not strictly parsed like JS, it becomes a whole lot messier to debug.
+Conclusions - A Framework like a Picture
 
 Ultimately, React is a choice like any JS framework. Although I think it has a lot of strengths, it ultimately depends on your own comfort as a developer and your want to build with it. Any engineering problem is for the most part possible, React in my opinion just makes it a whole lot easier. 
 
 With a little bit of React's watercooler moments under our belt, let's go to actually coding something. Chapter three and onwards!
 
+References 
 
+Appendices
